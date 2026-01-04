@@ -1,0 +1,1344 @@
+{
+  "info": {
+    "_postman_id": "f949e0dd-7266-4247-b53d-6b17a7d99f79",
+    "name": "Errorlytic SaaS API Collection",
+    "description": "Complete API collection for Errorlytic SaaS platform with billing, fraud detection, and invoice management",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "44532520"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('accessToken', response.data.accessToken);",
+                  "    pm.collectionVariables.set('refreshToken', response.data.refreshToken);",
+                  "    pm.collectionVariables.set('userId', response.data.user.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"Password123\",\n  \"profile\": {\n    \"name\": \"Test User\",\n    \"phone\": \"+254700000000\",\n    \"country\": \"Kenya\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "register"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('accessToken', response.data.accessToken);",
+                  "    pm.collectionVariables.set('refreshToken', response.data.refreshToken);",
+                  "    pm.collectionVariables.set('userId', response.data.user.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"Password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "login"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/refresh",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "refresh"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "profile"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"profile\": {\n    \"name\": \"Updated Name\",\n    \"phone\": \"+254700000001\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "profile"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Change Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currentPassword\": \"Password123\",\n  \"newPassword\": \"NewPassword123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/change-password",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "change-password"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Organization",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"garage\",\n  \"name\": \"Test Garage\",\n  \"address\": {\n    \"street\": \"123 Main St\",\n    \"city\": \"Nairobi\",\n    \"country\": \"Kenya\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/orgs",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "orgs"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Organization",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/orgs/{{orgId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "orgs", "{{orgId}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Billing System",
+      "item": [
+        {
+          "name": "Get Available Plans",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/billing/plans",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "billing", "plans"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Subscription",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('subscriptionId', response.data.subscription._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"planTier\": \"pro\",\n  \"currency\": \"KES\",\n  \"orgId\": null\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/billing/subscribe",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "billing", "subscribe"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Billing Dashboard",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/billing/dashboard?period=monthly",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "billing", "dashboard"],
+              "query": [
+                {
+                  "key": "period",
+                  "value": "monthly",
+                  "description": "Chart period: daily, weekly, monthly"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Billing Usage",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/billing/usage",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "billing", "usage"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Payment History",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/billing/payments?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "billing", "payments"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Invoice History",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/billing/invoices?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "billing", "invoices"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Generate Invoice",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('invoiceId', response.data.invoice._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/billing/subscription/{{subscriptionId}}/invoice",
+              "host": ["{{baseUrl}}"],
+              "path": [
+                "api",
+                "v1",
+                "billing",
+                "subscription",
+                "{{subscriptionId}}",
+                "invoice"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Download Invoice PDF",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/billing/invoice/{{invoiceId}}/pdf",
+              "host": ["{{baseUrl}}"],
+              "path": [
+                "api",
+                "v1",
+                "billing",
+                "invoice",
+                "{{invoiceId}}",
+                "pdf"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Send Invoice Email",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/billing/invoice/{{invoiceId}}/email",
+              "host": ["{{baseUrl}}"],
+              "path": [
+                "api",
+                "v1",
+                "billing",
+                "invoice",
+                "{{invoiceId}}",
+                "email"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel Subscription",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/billing/subscription/{{subscriptionId}}/cancel",
+              "host": ["{{baseUrl}}"],
+              "path": [
+                "api",
+                "v1",
+                "billing",
+                "subscription",
+                "{{subscriptionId}}",
+                "cancel"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Fraud Detection",
+      "item": [
+        {
+          "name": "Analyze User for Fraud",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"context\": {\n    \"userAgent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36\",\n    \"ipAddress\": \"192.168.1.1\",\n    \"country\": \"KE\",\n    \"timezone\": \"Africa/Nairobi\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/billing/fraud/analyze",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "billing", "fraud", "analyze"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Fraud Detection Rules",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/billing/fraud/rules",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "billing", "fraud", "rules"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Webhooks",
+      "item": [
+        {
+          "name": "Stripe Webhook",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "stripe-signature",
+                "value": "t=1234567890,v1=test_signature",
+                "description": "Stripe webhook signature"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"customer.subscription.created\",\n  \"data\": {\n    \"object\": {\n      \"id\": \"sub_test123\",\n      \"customer\": \"cus_test123\",\n      \"status\": \"active\",\n      \"metadata\": {\n        \"userId\": \"{{userId}}\"\n      }\n    }\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/billing/webhooks/stripe",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "billing", "webhooks", "stripe"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "System Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["health"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "API Info",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/",
+              "host": ["{{baseUrl}}"],
+              "path": [""]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Swagger Documentation",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api-docs",
+              "host": ["{{baseUrl}}"],
+              "path": ["api-docs"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "File Upload & Analysis",
+      "item": [
+        {
+          "name": "Upload VCDS File",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('uploadId', response.data.upload._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "/path/to/vcds-report.txt"
+                },
+                {
+                  "key": "source",
+                  "value": "VCDS",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/upload",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "upload"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Uploads",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/upload?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "upload"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Upload by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/upload/{{uploadId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "upload", "{{uploadId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Parse Upload",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/upload/{{uploadId}}/parse",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "upload", "{{uploadId}}", "parse"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Upload",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/upload/{{uploadId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "upload", "{{uploadId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Upload Stats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/upload/stats",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "upload", "stats"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Process Analysis",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('analysisId', response.data.analysis._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/analysis/process/{{uploadId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "analysis", "process", "{{uploadId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Analysis by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/analysis/{{analysisId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "analysis", "{{analysisId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Analyses",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/analysis?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "analysis"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Analysis",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"summary\": {\n    \"overview\": \"Updated analysis summary\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/analysis/{{analysisId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "analysis", "{{analysisId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Analysis",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/analysis/{{analysisId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "analysis", "{{analysisId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Analysis Statistics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/analysis/statistics/dashboard",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "analysis", "statistics", "dashboard"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Export Analysis",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/analysis/{{analysisId}}/export",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "analysis", "{{analysisId}}", "export"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Walkthroughs",
+      "item": [
+        {
+          "name": "Generate Walkthrough",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('walkthroughId', response.data.walkthrough._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/walkthrough/generate/{{analysisId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "walkthrough", "generate", "{{analysisId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Walkthrough by Analysis ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/walkthrough/{{analysisId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "walkthrough", "{{analysisId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Walkthrough",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"difficulty\": \"hard\",\n  \"totalEstimatedTime\": 120\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/walkthrough/{{walkthroughId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "walkthrough", "{{walkthroughId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add Walkthrough Step",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Test Component\",\n  \"detail\": \"Check the test component for issues\",\n  \"type\": \"check\",\n  \"estMinutes\": 15,\n  \"order\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/walkthrough/{{walkthroughId}}/steps",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "walkthrough", "{{walkthroughId}}", "steps"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Walkthrough",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/walkthrough/{{walkthroughId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "walkthrough", "{{walkthroughId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Export Walkthrough PDF",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/walkthrough/{{walkthroughId}}/export",
+              "host": ["{{baseUrl}}"],
+              "path": [
+                "api",
+                "v1",
+                "walkthrough",
+                "{{walkthroughId}}",
+                "export"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Quotations",
+      "item": [
+        {
+          "name": "Generate Quotation",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('quotationId', response.data.quotation._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"analysisId\": \"{{analysisId}}\",\n  \"currency\": \"KES\",\n  \"laborRate\": 2500,\n  \"markupPct\": 15,\n  \"taxPct\": 16,\n  \"useOEMParts\": true,\n  \"notes\": \"This quotation includes all necessary parts and labor.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/quotations/generate/{{analysisId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "quotations", "generate", "{{analysisId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Quotation by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/quotations/{{quotationId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "quotations", "{{quotationId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Quotations",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/quotations?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "quotations"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Quotation",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"notes\": \"Updated quotation notes\",\n  \"laborRate\": 3000\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/quotations/{{quotationId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "quotations", "{{quotationId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Quotation Status",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"accepted\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/quotations/{{quotationId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "quotations", "{{quotationId}}", "status"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Share Quotation",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/quotations/{{quotationId}}/share",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "quotations", "{{quotationId}}", "share"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Shared Quotation",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/quotations/share/{{shareLinkId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "quotations", "share", "{{shareLinkId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Quotation Statistics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/quotations/statistics",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "quotations", "statistics"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Quotation",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/quotations/{{quotationId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "quotations", "{{quotationId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Export Quotation PDF",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/quotations/{{quotationId}}/export",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "quotations", "{{quotationId}}", "export"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Error Codes",
+      "item": [
+        {
+          "name": "Get All Error Codes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/error-codes?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "error-codes"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Error Code by Code",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/error-codes/P0300",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "error-codes", "P0300"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Search Error Codes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/error-codes?search=misfire&category=Engine&severity=critical",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "error-codes"],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "misfire"
+                },
+                {
+                  "key": "category",
+                  "value": "Engine"
+                },
+                {
+                  "key": "severity",
+                  "value": "critical"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Error Code Statistics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/error-codes/stats/summary",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "error-codes", "stats", "summary"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Error Code Categories",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/error-codes/categories",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "error-codes", "categories"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get AI Explanation",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"P0300\",\n  \"context\": \"Engine misfire detected during acceleration\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/error-codes/ai-explanation",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "error-codes", "ai-explanation"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get AI Estimate",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"P0300\",\n  \"vehicleYear\": 2020,\n  \"vehicleModel\": \"Golf\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/error-codes/ai-estimate",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "error-codes", "ai-estimate"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Troubleshooting Guide",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"P0300\",\n  \"symptoms\": [\"Engine misfire\", \"Rough idle\"]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/error-codes/troubleshooting",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "error-codes", "troubleshooting"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{accessToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "requests": {},
+        "exec": [
+          "// Auto-refresh token if needed",
+          "const token = pm.collectionVariables.get('accessToken');",
+          "if (!token) {",
+          "    console.log('No access token found. Please login first.');",
+          "}"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "requests": {},
+        "exec": [
+          "// Global test script",
+          "if (pm.response.code >= 400) {",
+          "    console.log('Error Response:', pm.response.text());",
+          "}",
+          "",
+          "// Auto-save IDs from responses",
+          "if (pm.response.json && pm.response.json().data) {",
+          "    const data = pm.response.json().data;",
+          "    if (data.upload && data.upload._id) {",
+          "        pm.collectionVariables.set('uploadId', data.upload._id);",
+          "    }",
+          "    if (data.analysis && data.analysis._id) {",
+          "        pm.collectionVariables.set('analysisId', data.analysis._id);",
+          "    }",
+          "    if (data.walkthrough && data.walkthrough._id) {",
+          "        pm.collectionVariables.set('walkthroughId', data.walkthrough._id);",
+          "    }",
+          "    if (data.quotation && data.quotation._id) {",
+          "        pm.collectionVariables.set('quotationId', data.quotation._id);",
+          "    }",
+          "}"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "accessToken",
+      "value": ""
+    },
+    {
+      "key": "refreshToken",
+      "value": ""
+    },
+    {
+      "key": "userId",
+      "value": ""
+    },
+    {
+      "key": "subscriptionId",
+      "value": ""
+    },
+    {
+      "key": "invoiceId",
+      "value": ""
+    }
+  ]
+}

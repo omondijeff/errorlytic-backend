@@ -1,0 +1,608 @@
+Saturday,16,April,2016,10:26:15:03521
+VCDS -- Windows Based VAG/VAS Emulator Running on Windows 10 x64
+VCDS Version: 16.3.1.1 (x64)
+Data version: 20160325
+www.Ross-Tech.com
+
+
+VIN: **************  License Plate: 
+
+
+Chassis Type: AU (5Q0)
+Scan: 01 02 03 08 09 10 15 16 17 19 42 44 52 5F
+
+VIN: ************  Mileage: 22291km-13850miles
+
+01-Engine -- Status: Malfunction 0010
+02-Auto Trans -- Status: Malfunction 0010
+03-ABS Brakes -- Status: Malfunction 0010
+08-Auto HVAC -- Status: OK 0000
+09-Cent. Elect. -- Status: Malfunction 0010
+10-Park/Steer Assist -- Status: Malfunction 0010
+15-Airbags -- Status: OK 0000
+16-Steering wheel -- Status: OK 0000
+17-Instruments -- Status: Malfunction 0010
+19-CAN Gateway -- Status: OK 0000
+42-Door Elect, Driver -- Status: OK 0000
+44-Steering Assist -- Status: Malfunction 0010
+52-Door Elect, Pass. -- Status: OK 0000
+5F-Information Electr. -- Status: Malfunction 0010
+ 
+-------------------------------------------------------------------------------
+Address 01: Engine (J623-CHPA)       Labels: 04E-907-309-V1.clb
+   Part No SW: 04E 906 016 G    HW: 04E 907 309 A
+   Component: 1,4l R4 TSI   H08 7862  
+   Revision: WAH08---    
+   Coding: 01250032242405082000
+   Shop #: WSC 04363 002 1048576
+   ASAM Dataset: EV_ECM14TFS01104E906016G 002011
+   ROD: EV_ECM14TFS01104E906016G.rod
+   VCID: 26431A2059EACC0CEE-8072
+
+4 Faults Found:
+17158 - Databus 
+          U1123 00 [047] - Received Error Message
+          Confirmed - Tested Since Memory Clear
+             Freeze Frame:
+                    Fault Status: 00000001
+                    Fault Priority: 6
+                    Fault Frequency: 3
+                    Mileage: 22291 km
+                    Date: 2016.04.16
+                    Time: 09:45:42
+
+                    Engine speed: 0.00 /min
+                    Normed load value: 0.0 %
+                    Vehicle speed: 0 km/h
+                    Coolant temperature: 21 °C
+                    Intake air temperature: 22 °C
+                    Ambient air pressure: 1010 mbar
+                    Voltage terminal 30: 11.968 V
+                    Unlearning counter according OBD: 40
+                    Acceleration: 0.000 m/s²
+                    Cruise Control System (CCS); status-Bit 0: 0
+                    Drivetrain coordinator; ACC fault status-Bit 0: 0
+                    Drivetrain coordinator; ACC fault status-Bit 8: 0
+                    Drivetrain coord; cause of shutdown in cruise cntr and ACC mode-Bit 0: 0
+                    Drivetrain coord; cause of shutdown in cruise cntr and ACC mode-Bit 16: 128
+                    Drivetrain coord; cause of shutdown in cruise cntr and ACC mode-Bit 24: 128
+                    Drivetrain coord; cause of shutdown in cruise cntr and ACC mode-Bit 8: 0
+                    Drivetrain coordinator; brake fault status-Bit 0: 4
+                    Accelerator pedal travel: 0.00 %
+
+5250 - Function Restriction due to Faults in Other Modules 
+          U1113 00 [040] - -
+          Intermittent - Confirmed - Tested Since Memory Clear
+             Freeze Frame:
+                    Fault Status: 00000001
+                    Fault Priority: 6
+                    Fault Frequency: 1
+                    Mileage: 22291 km
+                    Date: 2016.04.16
+                    Time: 09:59:52
+
+                    Engine speed: 712.00 /min
+                    Normed load value: 16.1 %
+                    Vehicle speed: 0 km/h
+                    Coolant temperature: 72 °C
+                    Intake air temperature: 24 °C
+                    Ambient air pressure: 1010 mbar
+                    Voltage terminal 30: 14.630 V
+                    Unlearning counter according OBD: 40
+                    Outside air temperature: 18 °C
+                    Absolute intake pressure: 30 kPa abs
+                    Engine torque: 17.5 Nm
+                    Fuel level: 45.00 l
+                    Oxygen sensor bank 1 sensor 1; specified value: 1.0000
+                    Engine operating condition: Idling
+                    Engine operating condition-Test_Program_Channel 87: 5
+
+7150 - Implausible Data Received from Steering Angle Sensor Module (G85) 
+          U0428 00 [047] - -
+          Confirmed - Tested Since Memory Clear
+             Freeze Frame:
+                    Fault Status: 00000001
+                    Fault Priority: 6
+                    Fault Frequency: 1
+                    Mileage: 22291 km
+                    Date: 2016.04.16
+                    Time: 09:52:00
+
+                    Engine speed: 755.00 /min
+                    Normed load value: 18.0 %
+                    Vehicle speed: 0 km/h
+                    Coolant temperature: 47 °C
+                    Intake air temperature: 21 °C
+                    Ambient air pressure: 1010 mbar
+                    Voltage terminal 30: 14.606 V
+                    Unlearning counter according OBD: 40
+                    Outside air temperature: 18 °C
+                    Absolute intake pressure: 32 kPa abs
+                    Engine torque: 22.5 Nm
+                    Fuel level: 45.00 l
+                    Oxygen sensor bank 1 sensor 1; specified value: 1.0000
+                    Engine operating condition: Idling
+                    Engine operating condition-Test_Program_Channel 87: 5
+
+4716 - No Communications with Parking Brake Control Module 
+          U0128 00 [040] - -
+          Intermittent - Confirmed - Tested Since Memory Clear
+             Freeze Frame:
+                    Fault Status: 00000001
+                    Fault Priority: 6
+                    Fault Frequency: 1
+                    Mileage: 22291 km
+                    Date: 2016.04.16
+                    Time: 09:59:52
+
+                    Engine speed: 712.00 /min
+                    Normed load value: 16.1 %
+                    Vehicle speed: 0 km/h
+                    Coolant temperature: 72 °C
+                    Intake air temperature: 24 °C
+                    Ambient air pressure: 1010 mbar
+                    Voltage terminal 30: 14.630 V
+                    Unlearning counter according OBD: 40
+                    Outside air temperature: 18 °C
+                    Absolute intake pressure: 30 kPa abs
+                    Engine torque: 17.5 Nm
+                    Fuel level: 45.00 l
+                    Oxygen sensor bank 1 sensor 1; specified value: 1.0000
+                    Engine operating condition: Idling
+                    Engine operating condition-Test_Program_Channel 87: 5
+
+Readiness: 0000 0000
+
+-------------------------------------------------------------------------------
+Address 02: Auto Trans (J743)       Labels: 0CW-927-769.clb
+   Part No SW: 0CW 300 045     HW: 0AM 927 769 G
+   Component: GSG DQ200-MQB H43 5240  
+   Revision: 00043014    Serial number: CU501212296246
+   Coding: 0014
+   Shop #: WSC 00028 028 00025
+   ASAM Dataset: EV_TCMDQ200021 001001
+   ROD: EV_TCMDQ200021.rod
+   VCID: 76E30A60C9CAFC8C9E-8022
+
+2 Faults Found:
+25472 - No Communication with Gear Selector Module 
+          U0103 00 [072] - -
+          Intermittent - Confirmed - Tested Since Memory Clear
+             Freeze Frame:
+                    Fault Status: 00000001
+                    Fault Priority: 0
+                    Fault Frequency: 3
+                    Mileage: 22142 km
+                    Date: 2016.04.08
+                    Time: 11:39:00
+
+                    Engine speed: 18.75 /min
+                    Engine torque: -100 Nm
+                    Vehicle speed: 78 km/h
+                    Control Module temperature: -13 °C
+                    CURRENT pressure: -10.0 bar
+                    Clutch; primary stat: Fahren
+                    selected gear: GANG_5
+                    Driving position: N
+                    Accelerator position: 0.4 %
+                    DTC memory status: 7168
+
+21221 - No Communications with Parking Brake Control Module 
+          U0128 00 [008] - -
+          Intermittent - Confirmed - Tested Since Memory Clear
+             Freeze Frame:
+                    Fault Status: 00000001
+                    Fault Priority: 0
+                    Fault Frequency: 6
+                    Mileage: 22291 km
+                    Date: 2016.04.16
+                    Time: 09:59:52
+
+                    Engine speed: 3590.25 /min
+                    Engine torque: -100 Nm
+                    Vehicle speed: 66 km/h
+                    Control Module temperature: 72 °C
+                    CURRENT pressure: -9.5 bar
+                    Clutch; primary stat: Fahren
+                    selected gear: GANG_5
+                    Driving position: N
+                    Accelerator position: 0.4 %
+                    DTC memory status: 8448
+
+
+-------------------------------------------------------------------------------
+Address 03: ABS Brakes (J104)       Labels: 5Q0-907-379-IPB-V1.clb
+   Part No SW: 5Q0 907 379 AC    HW: 5Q0 907 379 D
+   Component: ESC           H75 0437  
+   Revision: 00000000    Serial number:               
+   Coding: 01FA8AA1202312700377060701C32980510448C0608094F3002A0028C1
+   Shop #: WSC 00028 028 00025
+   ASAM Dataset: EV_Brake1UDSContiMK100IPB 008020
+   ROD: EV_Brake1UDSContiMK100IPB_VW37.rod
+   VCID: 7DF1154CECFCAFD4DF-8028
+
+3 Faults Found:
+0295 - Steering angle sensor 
+          B1168 54 [137] - Missing Calibration / Basic Setting
+          MIL ON - Confirmed - Tested Since Memory Clear
+             Freeze Frame:
+                    Fault Status: 00000001
+                    Fault Priority: 2
+                    Fault Frequency: 1
+                    Reset counter: 5
+                    Mileage: 22291 km
+                    Date: 2016.04.16
+                    Time: 10:12:58
+
+8299 - Databus 
+          U1121 00 [009] - Missing Message
+          Confirmed - Tested Since Memory Clear
+             Freeze Frame:
+                    Fault Status: 00000001
+                    Fault Priority: 6
+                    Fault Frequency: 1
+                    Reset counter: 5
+                    Mileage: 22291 km
+                    Date: 2016.04.16
+                    Time: 10:12:58
+
+16390 - Display for Tire Pressure Monitoring 
+          C1146 02 [137] - Signal Failure
+          MIL ON - Confirmed - Tested Since Memory Clear
+             Freeze Frame:
+                    Fault Status: 00000001
+                    Fault Priority: 6
+                    Fault Frequency: 3
+                    Reset counter: 5
+                    Mileage: 22291 km
+                    Date: 2016.04.16
+                    Time: 10:12:07
+
+
+-------------------------------------------------------------------------------
+Address 08: Auto HVAC (J255)       Labels: 5G0-907-044.clb
+   Part No SW: 5G0 907 044 Q    HW: 5G0 907 044 Q
+   Component: Climatronic   H02 0503  
+   Revision: 00001K06    
+   Coding: 00120004200100011005004012101800
+   Shop #: WSC 00028 028 00025
+   ASAM Dataset: EV_ACClimaBHBVW37X 002017
+   ROD: EV_ACClimaBHBVW37X_VW37.rod
+   VCID: 3561CD6C944CB79457-8060
+
+   Fresh Air Blower Front: 
+
+   Refrigerant Pressure And Temperature Sender: 
+
+   Air quality sensor: 
+
+No fault code found.
+
+-------------------------------------------------------------------------------
+Address 09: Cent. Elect. (J519)       Labels: 5Q0-937-08X-MV1.clb
+   Part No SW: 5Q0 937 084 N    HW: 5Q0 937 084 N
+   Component: BCM MQBAB M   H14 0106  
+   Serial number: 00011234701612
+   Coding: 03001842C24102FB0FA4400000040308100A000000000000000000000000
+   Shop #: WSC 00028 028 00025
+   ASAM Dataset: EV_BCMCONTI 010001
+   ROD: EV_BCMBOSCH_VW37.rod
+   VCID: 4385A3B4CA981924E9-8016
+
+   Control Unit For Wiper Motor: 
+   Subsystem 1 - Part No SW: 5G2 955 119 A    HW: 5G2 955 119 A  Labels: 5QX-955-119-V1.CLB
+   Component: WWS    121120  042 0551 
+   Serial number:         121206042218
+   Coding: 0E4DD5
+
+   Rain Light Recognition Sensor: 
+   Subsystem 2 - Part No SW: 5Q0 955 547     HW: 5Q0 955 547   Labels: 5QX-955-547.CLB
+   Component: RLFS  024 0042 
+   Serial number: Y13M01D03H20M05S37S1
+   Coding: 00A8DD
+
+1 Fault Found:
+554773 - Databus 
+          U1121 00 [008] - Missing Message
+          Intermittent - Confirmed - Tested Since Memory Clear
+             Freeze Frame:
+                    Fault Status: 00000001
+                    Fault Priority: 6
+                    Fault Frequency: 1
+                    Reset counter: 45
+                    Mileage: 22291 km
+                    Date: 2016.04.16
+                    Time: 09:59:52
+
+
+-------------------------------------------------------------------------------
+Address 10: Park/Steer Assist (J791)       Labels: 5Q0-919-294.clb
+   Part No SW: 5Q0 919 294 B    HW: 5Q0 919 294 A
+   Component: PARKHILFE 8K  002 0026  
+   Revision: --------    Serial number: 94231233000504
+   Coding: 0031151011
+   Shop #: WSC 00028 028 00025
+   ASAM Dataset: EV_EPHVA18AU3700000 002016
+   ROD: EV_EPHVA18AU3700000_VW37.rod
+   VCID: 3A7BDE50BD5258ECBA-806E
+
+2 Faults Found:
+12658704 - Databus 
+          U1121 00 [008] - Missing Message
+          Intermittent - Confirmed - Tested Since Memory Clear
+             Freeze Frame:
+                    Fault Status: 00000001
+                    Fault Priority: 6
+                    Fault Frequency: 1
+                    Reset counter: 45
+                    Mileage: 22291 km
+                    Date: 2016.04.16
+                    Time: 09:59:51
+
+13637426 - Databus 
+          U1123 00 [009] - Received Error Message
+          Confirmed - Tested Since Memory Clear
+             Freeze Frame:
+                    Fault Status: 00000001
+                    Fault Priority: 6
+                    Fault Frequency: 3
+                    Reset counter: 4
+                    Mileage: 22291 km
+                    Date: 2016.04.16
+                    Time: 10:12:58
+
+
+-------------------------------------------------------------------------------
+Address 15: Airbags (J234)       Labels: 5Q0-959-655.clb
+   Part No SW: 5Q0 959 655 C    HW: 5Q0 959 655 C
+   Component: AirbagVW20    011 0361  
+   Serial number: 003F5R01UHNZ
+   Coding: 98CCC000000000005C00000000C800000065
+   WSC 00028 028 00061
+   ASAM Dataset: EV_AirbaVW20SMEVW37X 002126
+   ROD: EV_AirbaVW20SMEVW37X_VW37.rod
+   VCID: 408FACB8DB8E023CF4-8014
+
+   Side Sensor Driver Front: 
+   Subsystem 1 - Part No SW: -----------    HW: 480 000 201 13
+   Component: SideSensor_Df  001 0887 
+   Serial number: 357670000007612C7C0W
+   Coding: 2D2D2D
+
+   Side Sensor Passenger Front: 
+   Subsystem 2 - Part No SW: -----------    HW: 480 000 201 13
+   Component: SideSensor_Pf  001 0887 
+   Serial number: 358670000006332C7C0V
+   Coding: 2D2D2D
+
+   Side Sensor Driver Rear: 
+   Subsystem 3 - Part No SW: -----------    HW: 480 400 301 13
+   Component: SideSensor_Dr  001 6149 
+   Serial number: 3516502AF0CD5EC471C+
+   Coding: 2D2D2D
+
+   Side Sensor Passenger Rear: 
+   Subsystem 4 - Part No SW: -----------    HW: 480 000 201 13
+   Component: SideSensor_Pr  001 6149 
+   Serial number: 3526502B30CD5EC2136J
+   Coding: 2D2D2D
+
+   Front Sensor Driver: 
+   Subsystem 5 - Part No SW: -----------    HW: 480 401 112 12
+   Component: FrontSensor_D  001 6149 
+   Serial number: 3556502B30CD5EC4008M
+   Coding: 2D2D2D
+
+No fault code found.
+
+-------------------------------------------------------------------------------
+Address 16: Steering wheel (J527)       Labels: 5Q0-953-549.clb
+   Part No SW: 5Q0 953 507 AE    HW: 5Q0 953 549 A
+   Component: Lenks. Modul  007 0070  
+   Revision: --------    Serial number: 08011304220489
+   Coding: 0500
+   WSC 40195 333 37120
+   ASAM Dataset: EV_SMLSKLOMQB 009001
+   ROD: EV_SMLSKLOMQB_VW37.rod
+   VCID: 79F9015CF8D493F4F3-802C
+
+No fault code found.
+
+-------------------------------------------------------------------------------
+Address 17: Instruments (J285)       Labels: 5G0-920-XXX-17.clb
+   Part No SW: 5G0 920 860     HW: 5G0 920 860 
+   Component: KOMBI         235 0555  
+   Coding: 27A501082380800801087E00040000
+   WSC 00028 028 00025
+   ASAM Dataset: EV_DashBoardVDDMQBAB 008026
+   ROD: EV_DashBoardVDDMQBAB_VW37.rod
+   VCID: 65C15D2C646C071427-8030
+
+2 Faults Found:
+16776967 - Databus 
+          U1121 00 [008] - Missing Message
+          Intermittent - Confirmed - Tested Since Memory Clear
+             Freeze Frame:
+                    Fault Status: 00000001
+                    Fault Priority: 6
+                    Fault Frequency: 1
+                    Reset counter: 45
+                    Mileage: 22291 km
+                    Date: 2016.04.16
+                    Time: 09:59:52
+
+16776973 - Databus 
+          U1121 00 [008] - Missing Message
+          Intermittent - Confirmed - Tested Since Memory Clear
+             Freeze Frame:
+                    Fault Status: 00000001
+                    Fault Priority: 6
+                    Fault Frequency: 1
+                    Reset counter: 5
+                    Mileage: 22291 km
+                    Date: 2016.04.16
+                    Time: 09:59:56
+
+
+-------------------------------------------------------------------------------
+Address 19: CAN Gateway (J533)       Labels: 5Q0-907-530-V1.clb
+   Part No SW: 5Q0 907 530 E    HW: 5Q0 907 530 E
+   Component: GW MQB Mid    121 1109  
+   Revision: --------    Serial number: 0000188941
+   Coding: 030100342B086400EF0006481C0F00010001000000000000000000000000
+   WSC 00028 028 00025
+   ASAM Dataset: EV_GatewLear 006010
+   ROD: EV_GatewLear.rod
+   VCID: 3365F3749A38A9A479-8066
+
+   Alternator: 
+
+   Multi Function Steering Wheel Control Module: 
+   Subsystem 2 - Part No SW: 5G0 959 442 J    HW: 5G0 959 442 J
+   Component: E221__MFL-DC1  H13 0035 
+   Serial number: 02120005290300060291
+   Coding: 280000
+
+   Battery Monitoring Control Module: 
+   Subsystem 3 - Part No SW: 5Q0 915 181 C    HW: 5Q0 915 181 C
+   Component: J367-BDMHella  H03 8042 
+   Serial number: 3451678601          
+
+No fault code found.
+
+-------------------------------------------------------------------------------
+Address 42: Door Elect, Driver (J386)       Labels: 5QX-959-X93-42.clb
+   Part No SW: 5Q4 959 593     HW: 5Q4 959 593 
+   Component: TSG FS        007 0006  
+   Serial number: 0000046453458 
+   Coding: 003A02208001020000001000
+   WSC 00028 028 00025
+   ASAM Dataset: EV_DCUDriveSideEWMAXCONT 006001
+   ROD: EV_DCUDriveSideEWMAXCONT.rod
+   VCID: 020B66B09502D02CA2-8056
+
+   Drivers Door Rear Control Module: 
+   Subsystem 1 - Part No SW: 5Q4 959 812 A    HW: 5Q4 959 812 A
+   Component: Fond FHSG DRV  007 0002 
+   Serial number: 00000000000000502227
+   Coding: 0D0000
+
+No fault code found.
+
+-------------------------------------------------------------------------------
+Address 44: Steering Assist (J500)       Labels: 5Q0-909-144.clb
+   Part No SW: 5Q0 909 144 L    HW: 5Q0 909 144 L
+   Component: EPS_MQB_ZFLS  119 1021  
+   Coding: 01
+   WSC 00028 028 00025
+   ASAM Dataset: EV_SteerAssisMQB 008022
+   ROD: EV_SteerAssisMQB_VW37.rod
+   VCID: 3D71D54CAC7C6FD49F-8068
+
+1 Fault Found:
+15873 - Steering angle sensor 
+          B1168 54 [009] - Missing Calibration / Basic Setting
+          Confirmed - Tested Since Memory Clear
+             Freeze Frame:
+                    Fault Status: 00000001
+                    Fault Priority: 1
+                    Fault Frequency: 1
+                    Reset counter: 5
+                    Mileage: 22291 km
+                    Date: 2016.04.16
+                    Time: 10:20:49
+
+                    Motor status: 01 
+                    System status: Driving mode
+                    Supply voltage: 14.25 V
+                    Temperature: 33.0 °C
+                    KFC: 3E 
+                    KFA: 00 01 
+                    Environmental conditions: 5F 
+                    uAdSensI_U1V2Filtered_gdu16: 1.20 V
+                    uAdSensI_U5VFiltered_xdu16: 5.07820 V
+                    uioUdNotFilt_xdu16: 14.36 V
+                    uAdSensI_SwitchedKl30_xdu16: 14.36 V
+                    NoInitCause_AsicSens: [0x01] ASC_CTRL_SAS_HL_ERR - Error discovered by the High level application
+                    NoInitCause_RackPos_Rohwert: 00 00 
+                    RP_VALCNTSAV: not activated
+                    RP_DIAGNOSTICJOB: not activated
+                    RP_RPS: not activated
+                    RP_KMN_RACKPOS_SET: not activated
+                    RP_STARTUP: not activated
+                    RP_L2PLAUSI: not activated
+                    RP_INDEXPLAUSI: not activated
+                    RP_WHLSPDPLAUSI: not activated
+                    RP_RUKUCNTR: not activated
+                    RP_UNDERVOLT: not activated
+                    RP_CNTERR: not activated
+
+
+-------------------------------------------------------------------------------
+Address 52: Door Elect, Pass. (J387)       Labels: 5QX-959-X92-52.clb
+   Part No SW: 5Q4 959 592     HW: 5Q4 959 592 
+   Component: TSG BFS       007 0006  
+   Serial number: 0000048027940 
+   Coding: 003A00208E01020000801000
+   WSC 00028 028 00025
+   ASAM Dataset: EV_DCUPasseSideEWMAXCONT 006001
+   ROD: EV_DCUPasseSideEWMAXCONT_VW37.rod
+   VCID: 010969BC9004CB34BB-8054
+
+   Passengers Rear Door Control Module: 
+   Subsystem 1 - Part No SW: 5Q4 959 811 A    HW: 5Q0 959 811 A
+   Component: Fond FHSG PSG  007 0002 
+   Serial number: 00000000000000502825
+   Coding: 050000
+
+No fault code found.
+
+-------------------------------------------------------------------------------
+Address 5F: Information Electr. (J794)       Labels: 5G0-035-MIB-STD1.clb
+   Part No SW: 5G0 035 846 A    HW: 5G0 035 846 
+   Component: MU-S-N-ER     039 0450  
+   Serial number: V1F00501130081
+   Coding: 02730008FF00000011510001000900001F0104960100010047
+   WSC 12345 123 61029
+   ASAM Dataset: EV_MUStd4CPASE 002039
+   ROD: EV_MUStd4CPASE_VW37.rod
+   VCID: 275D17245EE0D504D5-8072
+
+   Operating And Display Unit 1: 
+   Subsystem 1 - Part No SW: 5G0 919 605 D    HW: 5G0 919 605 D
+   Component: ABT_Std_Nav  H44 0022 
+   Serial number: VWZ8Z9M3400KZM      
+
+   Data medium: 
+   Subsystem 2 - Part No SW: 5G0 919 866 A    HW: -----------
+   Component:  ROW 2013  --- 0022 
+   Serial number: --------------------
+
+2 Faults Found:
+7175 - Function Restricted due to Missing Message(s) 
+          U1111 00 [008] - -
+          Intermittent - Confirmed - Tested Since Memory Clear
+             Freeze Frame:
+                    Fault Status: 00000001
+                    Fault Priority: 6
+                    Fault Frequency: 1
+                    Reset counter: 45
+                    Mileage: 22291 km
+                    Date: 2016.04.16
+                    Time: 10:00:09
+
+7206 - Function Restricted due to Missing Message(s) 
+          U1111 00 [008] - -
+          Intermittent - Confirmed - Tested Since Memory Clear
+             Freeze Frame:
+                    Fault Status: 00000001
+                    Fault Priority: 6
+                    Fault Frequency: 1
+                    Reset counter: 5
+                    Mileage: 2016.04.16
+                    Time: 10:00:09
+
+
+End-------------------------(Elapsed Time: 03:13)--------------------------
+
+

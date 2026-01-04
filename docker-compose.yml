@@ -1,0 +1,91 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "7337:7337"
+    environment:
+      - NODE_ENV=production
+      - PORT=7337
+      - MONGODB_URI=mongodb://admin:password123@mongo:27017/errorlytic_saas?authSource=admin
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - JWT_SECRET=your_super_secret_jwt_key_here_change_in_production
+      - REDIS_URL=redis://redis:6379
+      - MINIO_ENDPOINT=minio
+      - MINIO_PORT=9000
+      - MINIO_ACCESS_KEY=minioadmin
+      - MINIO_SECRET_KEY=minioadmin123
+      - MINIO_BUCKET=errorlytic-uploads
+      - MINIO_USE_SSL=false
+    depends_on:
+      - mongo
+      - redis
+      - minio
+    volumes:
+      - ./uploads:/app/uploads
+    restart: unless-stopped
+    networks:
+      - errorlytic-network
+
+  mongo:
+    image: mongo:6.0
+    ports:
+      - "13337:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=password123
+    volumes:
+      - mongodb_data:/data/db
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    restart: unless-stopped
+    networks:
+      - errorlytic-network
+
+  mongo-express:
+    image: mongo-express:latest
+    ports:
+      - "8001:8081"
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=admin
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=password123
+      - ME_CONFIG_MONGODB_URL=mongodb://admin:password123@mongo:27017/
+    depends_on:
+      - mongo
+    restart: unless-stopped
+    networks:
+      - errorlytic-network
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6969:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    networks:
+      - errorlytic-network
+
+  minio:
+    image: minio/minio:latest
+    ports:
+      - "8888:9000"
+      - "9999:9001"
+    environment:
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin123
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+    restart: unless-stopped
+    networks:
+      - errorlytic-network
+
+networks:
+  errorlytic-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
+  redis_data:
+  minio_data:
