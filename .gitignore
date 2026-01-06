@@ -1,4 +1,47 @@
+# Dependencies
 node_modules/
-uploads/
+
+# Environment files
 .env
+.env.local
+.env.*.local
+docker.env
+
+# Uploads
+uploads/*
+!uploads/.gitkeep
+
+# Logs
+logs/
 *.log
+npm-debug.log*
+
+# Runtime
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage
+coverage/
+.nyc_output/
+
+# Build
+dist/
+build/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Test
+.jest/
+jest-results/
+
+# Misc
+*.bak
+*.tmp
+.cache/
