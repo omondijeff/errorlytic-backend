@@ -58,13 +58,7 @@ class QuotationService {
         throw new Error("Analysis not found");
       }
 
-      const walkthrough = await Walkthrough.findOne({ analysisId });
 
-      if (!walkthrough) {
-        throw new Error(
-          "Walkthrough not found. Please generate walkthrough first."
-        );
-      }
 
       // Get organization settings
       const organization = await Organization.findById(orgId);
