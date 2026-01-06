@@ -7,6 +7,11 @@ const quotationSchema = new mongoose.Schema(
       ref: "Organization",
       default: null,
     },
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
     analysisId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Analysis",

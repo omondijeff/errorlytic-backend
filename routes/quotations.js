@@ -213,11 +213,12 @@ router.get("/", authMiddleware, async (req, res) => {
   try {
     const userId = req.user._id;
     const orgId = req.user.orgId;
-    const { page = 1, limit = 10, status, currency } = req.query;
+    const { page = 1, limit = 10, status, currency, analysisId } = req.query;
 
     const filters = {};
     if (status) filters.status = status;
     if (currency) filters.currency = currency;
+    if (analysisId) filters.analysisId = analysisId;
 
     const result = await quotationService.getQuotations(
       userId,

@@ -133,6 +133,7 @@ class QuotationService {
       // Create quotation
       const quotation = new Quotation({
         orgId,
+        createdBy: userId,
         analysisId,
         currency,
         labor: {
@@ -460,7 +461,16 @@ class QuotationService {
    */
   async getQuotations(userId, orgId, filters = {}, page = 1, limit = 10) {
     try {
-      const query = { orgId: orgId, isActive: true, ...filters };
+      let query = { isActive: true, ...filters };
+      
+      // If orgId is present, scope by organization
+      if (orgId) {
+        query.orgId = orgId;
+      } else {
+        // Otherwise, scope by creator (individual user)
+        query.createdBy = userId;
+      }
+
       const options = {
         skip: (page - 1) * limit,
         limit: parseInt(limit),
