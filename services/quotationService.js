@@ -81,18 +81,47 @@ class QuotationService {
         taxPct = organization.settings?.taxPercentage || 16,
         useOEMParts = false,
         notes = "",
+        customLineItems = [], // Extract custom line items
       } = options;
 
-      // Calculate labor hours from walkthrough steps
-      const totalMinutes = walkthrough.totalEstimatedTime || 0;
-      const laborHours = Math.ceil(totalMinutes / 60); // Round up to nearest hour
+      let parts = [];
+      let laborHours = 0;
 
-      // Generate parts list from walkthrough
-      const parts = await this.generatePartsList(
-        walkthrough.parts,
-        currency,
-        useOEMParts
-      );
+      if (customLineItems && customLineItems.length > 0) {
+        // Use custom line items from frontend
+        parts = customLineItems.map(item => ({
+          name: item.description,
+          unitPrice: item.cost,
+          qty: 1,
+          subtotal: item.cost,
+          partNumber: item.code, // Store error code as part number
+          isOEM: false
+        }));
+        
+        // When using custom line items derived from error codes, labor is typically included in the estimate
+        // or set to 0 to rely on the parts (service items) cost
+        laborHours = 0; 
+      } else {
+        // Fallback to auto-generation from walkthrough
+        const walkthrough = await Walkthrough.findOne({ analysisId });
+
+        if (!walkthrough) {
+          throw new Error(
+            "Walkthrough not found. Please generate walkthrough first or provide custom line items."
+          );
+        }
+
+        // Calculate labor hours from walkthrough steps
+        const totalMinutes = walkthrough.totalEstimatedTime || 0;
+        laborHours = Math.ceil(totalMinutes / 60); // Round up to nearest hour
+
+        // Generate parts list from walkthrough
+        parts = await this.generatePartsList(
+          walkthrough.parts,
+          currency,
+          useOEMParts
+        );
+      }
 
       // Create quotation
       const quotation = new Quotation({

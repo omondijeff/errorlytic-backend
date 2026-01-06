@@ -126,6 +126,10 @@ router.post(
       .trim()
       .isLength({ max: 1000 })
       .withMessage("Notes must be less than 1000 characters"),
+    body("lineItems")
+      .optional()
+      .isArray()
+      .withMessage("Line items must be an array"),
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -141,7 +145,10 @@ router.post(
 
     try {
       const { analysisId } = req.params;
-      const options = req.body;
+      const options = {
+        ...req.body,
+        customLineItems: req.body.lineItems, // Map lineItems to customLineItems
+      };
       const userId = req.user._id;
       const orgId = req.user.orgId;
 
