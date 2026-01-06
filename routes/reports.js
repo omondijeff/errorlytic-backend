@@ -75,6 +75,8 @@ router.post(
       const {
         firstName,
         lastName,
+        clientEmail,
+        clientPhone,
         registrationNumber,
         carMake,
         carModel,
@@ -86,60 +88,82 @@ router.post(
 
       // Find or create vehicle
       let vehicle = null;
+
+      // First try to find by registration number
       if (registrationNumber) {
         vehicle = await Vehicle.findOne({
           plate: registrationNumber.toUpperCase(),
-          $or: [{ ownerUserId: userId }, { orgId: orgId }],
         });
+      }
 
-        if (vehicle) {
-          // Update vehicle information if new data is provided
-          let needsUpdate = false;
+      // If not found by plate and we have client email, try to find by email
+      if (!vehicle && clientEmail) {
+        vehicle = await Vehicle.findOne({
+          "ownerInfo.email": clientEmail.toLowerCase().trim(),
+          plate: registrationNumber ? registrationNumber.toUpperCase() : { $exists: true },
+        });
+      }
 
-          if (carMake && vehicle.make !== carMake) {
-            vehicle.make = carMake;
-            needsUpdate = true;
-          }
+      if (vehicle) {
+        // Update vehicle information if new data is provided
+        let needsUpdate = false;
 
-          if (carModel && vehicle.model !== carModel) {
-            vehicle.model = carModel;
-            needsUpdate = true;
-          }
+        if (carMake && vehicle.make !== carMake) {
+          vehicle.make = carMake;
+          needsUpdate = true;
+        }
 
-          if (year && vehicle.year !== parseInt(year)) {
-            vehicle.year = parseInt(year);
-            needsUpdate = true;
-          }
+        if (carModel && vehicle.model !== carModel) {
+          vehicle.model = carModel;
+          needsUpdate = true;
+        }
 
-          // Update owner information from form data
-          if (firstName || lastName) {
-            if (!vehicle.ownerInfo) {
-              vehicle.ownerInfo = {};
-            }
-            if (firstName) vehicle.ownerInfo.firstName = firstName;
-            if (lastName) vehicle.ownerInfo.lastName = lastName;
-            needsUpdate = true;
-          }
+        if (year && vehicle.year !== parseInt(year)) {
+          vehicle.year = parseInt(year);
+          needsUpdate = true;
+        }
 
-          if (needsUpdate) {
-            await vehicle.save();
-          }
-        } else {
-          // Create new vehicle
-          vehicle = new Vehicle({
-            orgId: orgId,
-            ownerUserId: userId,
-            make: carMake || "Unknown",
-            model: carModel || "Unknown",
-            year: year ? parseInt(year) : new Date().getFullYear(),
-            plate: registrationNumber.toUpperCase(),
-            ownerInfo: {
-              firstName: firstName || "",
-              lastName: lastName || "",
-            },
-          });
+        // Update owner information from form data
+        if (!vehicle.ownerInfo) {
+          vehicle.ownerInfo = {};
+        }
+        if (firstName && vehicle.ownerInfo.firstName !== firstName) {
+          vehicle.ownerInfo.firstName = firstName;
+          needsUpdate = true;
+        }
+        if (lastName && vehicle.ownerInfo.lastName !== lastName) {
+          vehicle.ownerInfo.lastName = lastName;
+          needsUpdate = true;
+        }
+        if (clientEmail && vehicle.ownerInfo.email !== clientEmail.toLowerCase().trim()) {
+          vehicle.ownerInfo.email = clientEmail.toLowerCase().trim();
+          needsUpdate = true;
+        }
+        if (clientPhone && vehicle.ownerInfo.phone !== clientPhone) {
+          vehicle.ownerInfo.phone = clientPhone;
+          needsUpdate = true;
+        }
+
+        if (needsUpdate) {
           await vehicle.save();
         }
+      } else if (registrationNumber) {
+        // Create new vehicle only if we have registration number
+        vehicle = new Vehicle({
+          orgId: orgId,
+          ownerUserId: userId,
+          make: carMake || "Unknown",
+          model: carModel || "Unknown",
+          year: year ? parseInt(year) : new Date().getFullYear(),
+          plate: registrationNumber.toUpperCase(),
+          ownerInfo: {
+            firstName: firstName || "",
+            lastName: lastName || "",
+            email: clientEmail ? clientEmail.toLowerCase().trim() : "",
+            phone: clientPhone || "",
+          },
+        });
+        await vehicle.save();
       }
 
       // Generate unique file key for MinIO
@@ -181,6 +205,8 @@ router.post(
           userInfo: {
             firstName,
             lastName,
+            clientEmail,
+            clientPhone,
             registrationNumber,
             carMake,
             carModel,
