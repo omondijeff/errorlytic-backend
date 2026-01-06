@@ -60,19 +60,32 @@ class QuotationService {
 
 
 
-      // Get organization settings
-      const organization = await Organization.findById(orgId);
-      if (!organization) {
-        throw new Error("Organization not found");
+      // Get organization settings (optional)
+      let organization = null;
+      if (orgId) {
+        organization = await Organization.findById(orgId);
+        if (!organization) {
+          throw new Error("Organization not found");
+        }
       }
+
+      // Determine defaults based on organization or system defaults
+      const orgSettings = organization?.settings || {};
+      const defaultCurrency = orgSettings.currency || "KES";
+      
+      // Calculate default labor rate - ensure we have a fallback if currency lookup fails
+      const systemDefaultLaborRate = this.defaultLaborRates[defaultCurrency] || 2500; 
+      const defaultLaborRate = orgSettings.laborRate || systemDefaultLaborRate;
+      
+      const defaultMarkup = orgSettings.markupPercentage !== undefined ? orgSettings.markupPercentage : 15;
+      const defaultTax = orgSettings.taxPercentage !== undefined ? orgSettings.taxPercentage : 16;
 
       // Extract options with defaults
       const {
-        currency = organization.settings?.currency || "KES",
-        laborRate = organization.settings?.laborRate ||
-          this.defaultLaborRates[currency],
-        markupPct = organization.settings?.markupPercentage || 15,
-        taxPct = organization.settings?.taxPercentage || 16,
+        currency = defaultCurrency,
+        laborRate = defaultLaborRate,
+        markupPct = defaultMarkup,
+        taxPct = defaultTax,
         useOEMParts = false,
         notes = "",
         customLineItems = [], // Extract custom line items
