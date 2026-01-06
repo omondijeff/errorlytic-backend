@@ -463,7 +463,7 @@ router.get(
 // @access  Private
 router.post("/ai-explanation", authMiddleware, async (req, res) => {
   try {
-    const { errorCode, description, vehicleMake, vehicleModel } = req.body;
+    const { errorCode, description, vehicleMake, vehicleModel, audience } = req.body;
 
     if (!errorCode || !description) {
       return res.status(400).json({
@@ -476,7 +476,8 @@ router.post("/ai-explanation", authMiddleware, async (req, res) => {
       errorCode,
       description,
       vehicleMake || "VAG",
-      vehicleModel || "Vehicle"
+      vehicleModel || "Vehicle",
+      audience || 'user' // 'user' or 'mechanic'
     );
 
     res.json({

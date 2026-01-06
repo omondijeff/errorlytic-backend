@@ -28,19 +28,42 @@ async function generateAIExplanation(
   errorCode,
   description,
   vehicleMake,
-  vehicleModel
+  vehicleModel,
+  audience = 'user' // 'user' or 'mechanic'
 ) {
   try {
     if (!process.env.OPENAI_API_KEY) {
       console.warn(
         "OpenAI API key not configured, returning default explanation"
       );
-      return generateDefaultExplanation(errorCode, description);
+      return generateDefaultExplanation(errorCode, description, audience);
     }
 
-    const prompt = `You are an expert automotive technician specializing in VAG Group vehicles (Volkswagen, Audi, Porsche, Skoda, Seat, Fiat).
+    const isMechanic = audience === 'mechanic';
+    
+    const prompt = isMechanic
+      ? `You are an expert automotive technician specializing in VAG Group vehicles (Volkswagen, Audi, Porsche, Skoda, Seat, Fiat).
 
-Please provide a detailed, professional explanation for the following error code:
+Provide a TECHNICAL explanation for a PROFESSIONAL MECHANIC about this error code:
+
+Error Code: ${errorCode}
+Description: ${description}
+Vehicle: ${vehicleMake} ${vehicleModel}
+
+Provide:
+1. Technical diagnosis: What system/component is affected and why
+2. Root causes: Specific VAG vehicle issues, common failure points, diagnostic paths
+3. Repair approach: Step-by-step diagnostic procedure, what to check/test first
+4. Parts and labor: Likely parts needed, OEM part numbers if known, estimated labor time
+5. Related systems: Other components that may be affected or need checking
+6. Cost considerations: Parts cost range, labor complexity
+
+Keep it technical and professional - assume the mechanic has diagnostic equipment and VAG knowledge. Focus on actionable diagnostic and repair information.
+
+Format: Start with a brief 1-2 sentence summary, then detailed technical information.`
+      : `You are an expert automotive technician specializing in VAG Group vehicles (Volkswagen, Audi, Porsche, Skoda, Seat, Fiat).
+
+Please provide a clear, user-friendly explanation for a VEHICLE OWNER about this error code:
 
 Error Code: ${errorCode}
 Description: ${description}
@@ -53,7 +76,7 @@ Please provide:
 4. General repair recommendations
 5. Safety considerations
 
-Keep the explanation professional but accessible to both mechanics and vehicle owners. Focus on VAG-specific information and common issues with these brands.
+Keep the explanation professional but accessible to vehicle owners. Avoid technical jargon. Focus on what the owner needs to know and what they should do.
 
 Format your response in clear paragraphs with bullet points where appropriate.`;
 
@@ -76,13 +99,13 @@ Format your response in clear paragraphs with bullet points where appropriate.`;
 
     return (
       completion.choices[0]?.message?.content?.trim() ||
-      generateDefaultExplanation(errorCode, description)
+      generateDefaultExplanation(errorCode, description, audience)
     );
   } catch (error) {
     console.error("OpenAI API error:", error);
 
     // Return default explanation on API failure
-    return generateDefaultExplanation(errorCode, description);
+    return generateDefaultExplanation(errorCode, description, audience);
   }
 }
 
@@ -92,7 +115,28 @@ Format your response in clear paragraphs with bullet points where appropriate.`;
  * @param {string} description - The error description
  * @returns {string} - Default explanation
  */
-function generateDefaultExplanation(errorCode, description) {
+function generateDefaultExplanation(errorCode, description, audience = 'user') {
+  if (audience === 'mechanic') {
+    return `Error Code ${errorCode}: ${description}
+
+Technical Summary: This DTC indicates a fault in the affected system. Requires diagnostic scan with VCDS or compatible scanner.
+
+Diagnostic Procedure:
+• Check live data for related parameters
+• Verify sensor readings and compare to specifications
+• Inspect wiring harness for damage/corrosion
+• Test component functionality
+• Check for related fault codes
+
+Common Causes (VAG-specific):
+• Sensor failure or out of specification
+• Wiring/connector issues
+• ECU communication problems
+• Component mechanical failure
+
+Estimated Repair: Requires diagnostic time + parts replacement. Check parts availability and labor guide for specific vehicle.`;
+  }
+  
   return `Error Code ${errorCode}: ${description}
 
 This is a diagnostic trouble code (DTC) that indicates a problem with your vehicle's systems. 
