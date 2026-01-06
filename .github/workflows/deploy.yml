@@ -30,12 +30,17 @@ jobs:
             # Pull latest code
             git pull origin main || git pull origin master
 
-            # Rebuild and restart containers
-            sudo docker compose build --no-cache app
-            sudo docker compose up -d
+            # Rebuild app only (preserves data volumes)
+            docker compose build --no-cache app
 
-            # Clean up old images
-            sudo docker image prune -f
+            # Graceful restart - stop app first, then start
+            # This ensures clean shutdown and data persistence
+            docker compose stop app
+            docker compose up -d --no-recreate mongo redis minio
+            docker compose up -d app
+
+            # Clean up old images (NOT volumes)
+            docker image prune -f
 
             echo "Deployment complete!"
           EOF
