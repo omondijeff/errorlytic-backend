@@ -348,6 +348,37 @@ router.put("/users/:id", async (req, res) => {
     if (updates.plan) user.plan.tier = updates.plan;
     if (updates.isActive !== undefined) user.isActive = updates.isActive;
 
+    // Handle organization assignment
+    if (updates.organization && updates.role !== "individual" && updates.role !== "superadmin") {
+      // Determine organization type based on role
+      const orgType = updates.role.includes("garage") ? "garage" : "insurer";
+
+      // Find existing organization or create new one
+      let org = await Organization.findOne({ name: updates.organization });
+
+      if (!org) {
+        // Create the organization
+        org = new Organization({
+          name: updates.organization,
+          type: orgType,
+          country: user.profile?.country || "Kenya",
+          currency: "KES",
+          plan: {
+            tier: "pro",
+            status: "active",
+          },
+          isActive: true,
+        });
+        await org.save();
+        console.log(`[ORG CREATED] Created new organization "${updates.organization}" (${orgType}) while updating user ${user.email}`);
+      }
+
+      user.orgId = org._id;
+    } else if (updates.role === "individual" || updates.role === "superadmin") {
+      // Remove org assignment for individual/superadmin roles
+      user.orgId = null;
+    }
+
     await user.save();
 
     // Log the action
@@ -365,6 +396,9 @@ router.put("/users/:id", async (req, res) => {
       },
     });
 
+    // Populate org name for response
+    await user.populate("orgId", "name type");
+
     res.json({
       success: true,
       message: "User updated successfully",
@@ -373,6 +407,7 @@ router.put("/users/:id", async (req, res) => {
         email: user.email,
         name: user.profile.name,
         role: user.role,
+        organization: user.orgId?.name || null,
         plan: user.plan.tier,
         isActive: user.isActive,
       },
