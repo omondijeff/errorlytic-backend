@@ -15,7 +15,11 @@ router.post(
   authMiddleware,
   [
     body("garageId").notEmpty().withMessage("Garage ID is required"),
-    body("vehicleId").notEmpty().withMessage("Vehicle ID is required"),
+    // vehicleId is required unless it's a walk-in booking
+    body("vehicleId")
+      .if(body("isWalkIn").not().equals(true))
+      .notEmpty()
+      .withMessage("Vehicle ID is required"),
     body("serviceType")
       .isIn(["inspection", "repair", "maintenance", "diagnostic"])
       .withMessage("Invalid service type"),
@@ -31,6 +35,24 @@ router.post(
       .trim()
       .isLength({ max: 1000 })
       .withMessage("Notes must be less than 1000 characters"),
+    // Walk-in booking validations
+    body("isWalkIn").optional().isBoolean(),
+    body("clientInfo.name")
+      .if(body("isWalkIn").equals(true))
+      .notEmpty()
+      .withMessage("Client name is required for walk-in bookings"),
+    body("clientInfo.phone")
+      .if(body("isWalkIn").equals(true))
+      .notEmpty()
+      .withMessage("Client phone is required for walk-in bookings"),
+    body("vehicleInfo.make")
+      .if(body("isWalkIn").equals(true))
+      .notEmpty()
+      .withMessage("Vehicle make is required for walk-in bookings"),
+    body("vehicleInfo.plate")
+      .if(body("isWalkIn").equals(true))
+      .notEmpty()
+      .withMessage("Vehicle plate is required for walk-in bookings"),
   ],
   async (req, res) => {
     const errors = validationResult(req);

@@ -164,6 +164,76 @@ router.get("/metrics", authMiddleware, async (req, res) => {
 });
 
 /**
+ * @route   GET /api/v1/vehicles/clients
+ * @desc    Get unique clients who have vehicles (for garage bookings)
+ * @access  Private
+ */
+router.get("/clients", authMiddleware, async (req, res) => {
+  try {
+    const orgId = req.user.orgId;
+
+    if (!orgId) {
+      return res.status(400).json({
+        type: "bad_request",
+        title: "Bad Request",
+        detail: "Organization ID required",
+      });
+    }
+
+    // Find all vehicles belonging to this organization and get unique owners
+    const vehicles = await Vehicle.find({ orgId, isActive: true })
+      .populate("ownerUserId", "email profile.name profile.phone")
+      .select("ownerUserId ownerInfo")
+      .lean();
+
+    // Build unique clients list (both registered users and ownerInfo)
+    const clientsMap = new Map();
+
+    vehicles.forEach((vehicle) => {
+      if (vehicle.ownerUserId) {
+        const userId = vehicle.ownerUserId._id.toString();
+        if (!clientsMap.has(userId)) {
+          clientsMap.set(userId, {
+            id: userId,
+            name: vehicle.ownerUserId.profile?.name || "Unknown",
+            email: vehicle.ownerUserId.email || "",
+            phone: vehicle.ownerUserId.profile?.phone || "",
+            type: "registered",
+          });
+        }
+      } else if (vehicle.ownerInfo?.name) {
+        // For vehicles with embedded owner info (no user account)
+        const key = `info_${vehicle.ownerInfo.phone || vehicle.ownerInfo.email}`;
+        if (!clientsMap.has(key)) {
+          clientsMap.set(key, {
+            id: key,
+            name: vehicle.ownerInfo.name,
+            email: vehicle.ownerInfo.email || "",
+            phone: vehicle.ownerInfo.phone || "",
+            type: "embedded",
+          });
+        }
+      }
+    });
+
+    const clients = Array.from(clientsMap.values());
+
+    res.json({
+      success: true,
+      data: clients,
+      total: clients.length,
+    });
+  } catch (error) {
+    console.error("Get clients error:", error);
+    res.status(500).json({
+      type: "internal_error",
+      title: "Internal Server Error",
+      detail: "Failed to retrieve clients",
+    });
+  }
+});
+
+/**
  * @route   GET /api/v1/vehicles/:vehicleId
  * @desc    Get vehicle details
  * @access  Private
@@ -211,12 +281,23 @@ router.get("/", authMiddleware, async (req, res) => {
   try {
     const userId = req.user._id;
     const orgId = req.user.orgId;
-    const { page = 1, limit = 10, search } = req.query;
+    const { page = 1, limit = 10, search, ownerId } = req.query;
 
     const query = {
       $or: [{ ownerUserId: userId }, { orgId: orgId }],
       isActive: true,
     };
+
+    // Filter by specific owner if provided (for garage booking flow)
+    if (ownerId) {
+      query.ownerUserId = ownerId;
+      // Remove the $or condition when filtering by specific owner
+      delete query.$or;
+      // Still require org access
+      if (orgId) {
+        query.orgId = orgId;
+      }
+    }
 
     // Add search filter if provided
     if (search) {
@@ -240,21 +321,36 @@ router.get("/", authMiddleware, async (req, res) => {
 
     const total = await Vehicle.countDocuments(query);
 
-    // Transform data for frontend
-    const transformedVehicles = vehicles.map((vehicle) => ({
-      id: vehicle._id,
-      name: vehicle.ownerInfo?.name || vehicle.ownerUserId?.profile?.name || "N/A",
-      registrationNo: vehicle.plate || "N/A",
-      carType: `${vehicle.make || ""} ${vehicle.model || ""}`.trim() || "N/A",
-      email: vehicle.ownerUserId?.email || "N/A",
-      status: vehicle.isActive && vehicle.ownerUserId?.isActive ? "Active" : "Inactive",
-      vehicleId: vehicle._id,
-      ownerId: vehicle.ownerUserId?._id || null,
-    }));
+    // Return raw data for booking flow (when ownerId is provided)
+    // Otherwise transform data for the main vehicles list
+    let responseData;
+    if (ownerId) {
+      // Raw data for booking form
+      responseData = vehicles.map((vehicle) => ({
+        _id: vehicle._id,
+        id: vehicle._id,
+        make: vehicle.make,
+        model: vehicle.model,
+        year: vehicle.year,
+        plate: vehicle.plate,
+      }));
+    } else {
+      // Transform data for main vehicles list
+      responseData = vehicles.map((vehicle) => ({
+        id: vehicle._id,
+        name: vehicle.ownerInfo?.name || vehicle.ownerUserId?.profile?.name || "N/A",
+        registrationNo: vehicle.plate || "N/A",
+        carType: `${vehicle.make || ""} ${vehicle.model || ""}`.trim() || "N/A",
+        email: vehicle.ownerUserId?.email || "N/A",
+        status: vehicle.isActive && vehicle.ownerUserId?.isActive ? "Active" : "Inactive",
+        vehicleId: vehicle._id,
+        ownerId: vehicle.ownerUserId?._id || null,
+      }));
+    }
 
     res.json({
       success: true,
-      data: transformedVehicles,
+      data: responseData,
       total,
       page: parseInt(page),
       limit: parseInt(limit),

@@ -357,6 +357,10 @@ router.post(
             orgId: user.orgId,
             plan: user.plan,
             quotas: user.quotas,
+            googleCalendar: {
+              isConnected: user.googleCalendar?.isConnected || false,
+              calendarId: user.googleCalendar?.calendarId,
+            },
           },
           accessToken,
           refreshToken,
@@ -762,6 +766,10 @@ router.get("/profile", authMiddleware, async (req, res) => {
           organization: req.user.organization,
           plan: req.user.plan,
           quotas: req.user.quotas,
+          googleCalendar: {
+            isConnected: req.user.googleCalendar?.isConnected || false,
+            calendarId: req.user.googleCalendar?.calendarId,
+          },
           isActive: req.user.isActive,
           lastLogin: req.user.lastLogin,
           createdAt: req.user.createdAt,

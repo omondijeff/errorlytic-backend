@@ -23,18 +23,35 @@ class BookingService {
         notes,
         quotationId,
         analysisId,
+        // Walk-in booking fields
+        clientId,
+        clientInfo,
+        vehicleInfo,
+        isWalkIn,
       } = bookingData;
-
-      // Validate vehicle exists and belongs to user
-      const vehicle = await Vehicle.findById(vehicleId);
-      if (!vehicle) {
-        throw new Error("Vehicle not found");
-      }
 
       // Validate garage exists
       const garage = await Organization.findById(garageId);
       if (!garage || garage.type !== "garage") {
         throw new Error("Invalid garage");
+      }
+
+      // For walk-in bookings, validate clientInfo and vehicleInfo
+      // For regular bookings, validate vehicleId
+      let vehicle = null;
+      if (isWalkIn) {
+        if (!clientInfo || !clientInfo.name || !clientInfo.phone) {
+          throw new Error("Client name and phone are required for walk-in bookings");
+        }
+        if (!vehicleInfo || !vehicleInfo.make || !vehicleInfo.plate) {
+          throw new Error("Vehicle make and plate are required for walk-in bookings");
+        }
+      } else {
+        // Validate vehicle exists
+        vehicle = await Vehicle.findById(vehicleId);
+        if (!vehicle) {
+          throw new Error("Vehicle not found");
+        }
       }
 
       // Check for conflicting bookings
@@ -51,10 +68,8 @@ class BookingService {
       }
 
       // Create booking
-      const booking = new Booking({
-        clientId: bookingData.clientId || userId,
+      const bookingPayload = {
         garageId,
-        vehicleId,
         serviceType,
         scheduledDate: new Date(scheduledDate),
         duration,
@@ -63,16 +78,33 @@ class BookingService {
         analysisId,
         createdBy: userId,
         status: bookingData.status || "pending",
-      });
+      };
+
+      if (isWalkIn) {
+        // Walk-in booking - store client and vehicle info directly
+        bookingPayload.clientInfo = clientInfo;
+        bookingPayload.vehicleInfo = vehicleInfo;
+        bookingPayload.source = "walk_in";
+      } else {
+        // Regular booking - reference existing client and vehicle
+        bookingPayload.clientId = clientId || userId;
+        bookingPayload.vehicleId = vehicleId;
+        bookingPayload.source = "app";
+      }
+
+      const booking = new Booking(bookingPayload);
 
       await booking.save();
 
-      // Populate references
-      await booking.populate([
-        { path: "clientId", select: "email profile" },
-        { path: "garageId", select: "name contact" },
-        { path: "vehicleId", select: "make model year plate" },
-      ]);
+      // Populate references (only for non-walk-in bookings)
+      const populateFields = [{ path: "garageId", select: "name contact" }];
+      if (!isWalkIn) {
+        populateFields.push(
+          { path: "clientId", select: "email profile" },
+          { path: "vehicleId", select: "make model year plate" }
+        );
+      }
+      await booking.populate(populateFields);
 
       // Log activity
       await AuditLog.create({

@@ -6,11 +6,18 @@ const bookingSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
-    // For public bookings where client doesn't have an account
+    // For public/walk-in bookings where client doesn't have an account
     clientInfo: {
       name: String,
       email: String,
       phone: String,
+    },
+    // For walk-in bookings where vehicle is not registered
+    vehicleInfo: {
+      make: String,
+      model: String,
+      year: Number,
+      plate: String,
     },
     garageId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -61,7 +68,7 @@ const bookingSchema = new mongoose.Schema(
     },
     source: {
       type: String,
-      enum: ["app", "public_booking"],
+      enum: ["app", "public_booking", "walk_in"],
       default: "app",
     },
     confirmedBy: {
