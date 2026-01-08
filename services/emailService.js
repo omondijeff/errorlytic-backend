@@ -52,12 +52,14 @@ class EmailService {
    * Generate the email header with logo
    */
   getEmailHeader() {
+    const logoUrl = process.env.FRONTEND_URL
+      ? `${process.env.FRONTEND_URL}/logo-web-landscape.png`
+      : "https://errorlytic.tajilabs.co.ke/logo-web-landscape.png";
+
     return `
       <div style="background: linear-gradient(135deg, ${this.brandColors.dark} 0%, #2d2d2d 100%); padding: 40px 20px; text-align: center;">
-        <h1 style="color: ${this.brandColors.white}; font-size: 32px; font-weight: 700; margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
-          <span style="color: ${this.brandColors.primary};">Error</span>lytic
-        </h1>
-        <p style="color: ${this.brandColors.gray}; font-size: 14px; margin: 8px 0 0 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+        <img src="${logoUrl}" alt="Errorlytic" style="height: 50px; width: auto; margin-bottom: 12px;" />
+        <p style="color: ${this.brandColors.gray}; font-size: 14px; margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
           AI-Powered Automotive Diagnostics
         </p>
       </div>
