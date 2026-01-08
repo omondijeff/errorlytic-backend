@@ -589,7 +589,16 @@ router.post(
       }
 
       // Check access permissions
-      if (quotation.orgId && quotation.orgId.toString() !== orgId.toString()) {
+      if (quotation.orgId && orgId && quotation.orgId.toString() !== orgId.toString()) {
+        return res.status(403).json({
+          type: "access_denied",
+          title: "Access Denied",
+          detail: "You don't have permission to send this quotation",
+        });
+      }
+
+      // For individual users, check if they created the quotation
+      if (!orgId && quotation.createdBy && quotation.createdBy.toString() !== req.user._id.toString()) {
         return res.status(403).json({
           type: "access_denied",
           title: "Access Denied",
@@ -608,14 +617,22 @@ router.post(
       }
 
       const vehicle = analysis.vehicleId;
-      const organization = await Organization.findById(orgId);
 
+      // Get organization if available, or use defaults for individual users
+      let organization = null;
+      if (orgId) {
+        organization = await Organization.findById(orgId);
+      }
+
+      // If no organization, create a default one for email purposes
       if (!organization) {
-        return res.status(404).json({
-          type: "organization_not_found",
-          title: "Organization Not Found",
-          detail: "Organization not found",
-        });
+        organization = {
+          name: "Errorlytic",
+          contact: {
+            email: process.env.SMTP_FROM || "support@errorlytic.com",
+            phone: "",
+          },
+        };
       }
 
       // Determine client email - use override or vehicle owner's email
