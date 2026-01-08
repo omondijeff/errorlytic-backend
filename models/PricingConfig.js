@@ -189,11 +189,11 @@ const pricingConfigSchema = new mongoose.Schema({
     perAnalysisCost: {
       KES: {
         type: Number,
-        default: 50,
+        default: 200,
       },
       USD: {
         type: Number,
-        default: 0.35,
+        default: 1.50,
       },
     },
   },
@@ -277,7 +277,7 @@ pricingConfigSchema.statics.createDefault = async function() {
             yearly: { KES: 75000, USD: 500 },
           },
           includedAnalyses: 100,
-          overageRate: { KES: 50, USD: 0.35 },
+          overageRate: { KES: 200, USD: 1.50 },
           features: [
             'ai_insights',
             'pdf_export',
@@ -313,7 +313,7 @@ pricingConfigSchema.statics.createDefault = async function() {
           enabled: true,
         },
       ],
-      perAnalysisCost: { KES: 50, USD: 0.35 },
+      perAnalysisCost: { KES: 200, USD: 1.50 },
     },
     features: [
       {
