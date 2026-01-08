@@ -67,6 +67,15 @@ jobs:
 
       - name: Health check
         run: |
-          sleep 10
-          curl -f https://api.errorlytic.tajilabs.co.ke/health || exit 1
-          echo "Health check passed!"
+          echo "Waiting for server to start..."
+          sleep 30
+          for i in {1..5}; do
+            if curl -sf https://api.errorlytic.tajilabs.co.ke/health; then
+              echo "Health check passed!"
+              exit 0
+            fi
+            echo "Attempt $i failed, retrying in 10s..."
+            sleep 10
+          done
+          echo "Health check failed after 5 attempts"
+          exit 1
