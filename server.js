@@ -24,6 +24,8 @@ const reportsRoutes = require("./routes/reports");
 const vehiclesRoutes = require("./routes/vehicles");
 const creditsRoutes = require("./routes/credits");
 const paymentsRoutes = require("./routes/payments");
+const bookingsRoutes = require("./routes/bookings");
+const organizationRoutes = require("./routes/organizations");
 
 // Import middleware
 const { errorHandler } = require("./middleware/errorHandler");
@@ -117,6 +119,8 @@ app.use("/api/v1/reports", reportsRoutes);
 app.use("/api/v1/vehicles", authMiddleware, vehiclesRoutes);
 app.use("/api/v1/credits", creditsRoutes);
 app.use("/api/v1/payments", paymentsRoutes);
+app.use("/api/v1/bookings", authMiddleware, bookingsRoutes);
+app.use("/api/v1/organizations", authMiddleware, organizationRoutes);
 
 // Legacy API routes (for backward compatibility)
 app.use("/api/auth", authRoutes);

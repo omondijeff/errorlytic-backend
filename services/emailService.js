@@ -49,18 +49,16 @@ class EmailService {
   }
 
   /**
-   * Generate the email header with logo
+   * Generate the email header with garage/organization branding
    */
-  getEmailHeader() {
-    const logoUrl = process.env.FRONTEND_URL
-      ? `${process.env.FRONTEND_URL}/logo-web-landscape.png`
-      : "https://errorlytic.tajilabs.co.ke/logo-web-landscape.png";
-
+  getEmailHeader(organizationName = "Errorlytic") {
     return `
       <div style="background: linear-gradient(135deg, ${this.brandColors.dark} 0%, #2d2d2d 100%); padding: 40px 20px; text-align: center;">
-        <img src="${logoUrl}" alt="Errorlytic" style="height: 50px; width: auto; margin-bottom: 12px;" />
-        <p style="color: ${this.brandColors.gray}; font-size: 14px; margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
-          AI-Powered Automotive Diagnostics
+        <h1 style="color: ${this.brandColors.white}; font-size: 28px; font-weight: 700; margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+          ${organizationName}
+        </h1>
+        <p style="color: ${this.brandColors.gray}; font-size: 14px; margin: 8px 0 0 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+          Professional Automotive Services
         </p>
       </div>
     `;
@@ -69,19 +67,33 @@ class EmailService {
   /**
    * Generate the email footer
    */
-  getEmailFooter(organizationName = "Errorlytic") {
+  getEmailFooter(organizationName = "Errorlytic", organizationContact = {}) {
+    const logoUrl = process.env.FRONTEND_URL
+      ? `${process.env.FRONTEND_URL}/logo-web-landscape.png`
+      : "https://errorlytic.tajilabs.co.ke/logo-web-landscape.png";
+
+    const contactInfo = [];
+    if (organizationContact.phone) contactInfo.push(`📞 ${organizationContact.phone}`);
+    if (organizationContact.email) contactInfo.push(`✉️ ${organizationContact.email}`);
+
     return `
       <div style="background: ${this.brandColors.lightGray}; padding: 30px 20px; text-align: center; border-top: 1px solid #e5e7eb;">
-        <p style="color: ${this.brandColors.gray}; font-size: 14px; margin: 0 0 10px 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
-          Sent by <strong>${organizationName}</strong> via Errorlytic
+        <p style="color: ${this.brandColors.dark}; font-size: 16px; font-weight: 600; margin: 0 0 8px 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+          ${organizationName}
         </p>
-        <p style="color: ${this.brandColors.gray}; font-size: 12px; margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
-          Professional Automotive Diagnostic Services
+        ${contactInfo.length > 0 ? `
+        <p style="color: ${this.brandColors.gray}; font-size: 13px; margin: 0 0 20px 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+          ${contactInfo.join(' &nbsp;|&nbsp; ')}
         </p>
-        <div style="margin-top: 20px;">
-          <a href="https://errorlytic.com" style="color: ${this.brandColors.primary}; text-decoration: none; font-size: 12px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
-            www.errorlytic.com
-          </a>
+        ` : ''}
+        <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+          <p style="color: ${this.brandColors.gray}; font-size: 11px; margin: 0 0 8px 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+            Powered by
+          </p>
+          <img src="${logoUrl}" alt="Errorlytic" style="height: 24px; width: auto;" />
+          <p style="color: ${this.brandColors.gray}; font-size: 10px; margin: 8px 0 0 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+            AI-Powered Automotive Diagnostics
+          </p>
         </div>
       </div>
     `;
@@ -90,14 +102,14 @@ class EmailService {
   /**
    * Generate base email template
    */
-  getBaseTemplate(content, organizationName) {
+  getBaseTemplate(content, organizationName, organizationContact = {}) {
     return `
       <!DOCTYPE html>
       <html lang="en">
       <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Errorlytic</title>
+        <title>${organizationName}</title>
       </head>
       <body style="margin: 0; padding: 0; background-color: #f3f4f6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
         <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f3f4f6;">
@@ -106,7 +118,7 @@ class EmailService {
               <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
                 <tr>
                   <td>
-                    ${this.getEmailHeader()}
+                    ${this.getEmailHeader(organizationName)}
                   </td>
                 </tr>
                 <tr>
@@ -116,7 +128,7 @@ class EmailService {
                 </tr>
                 <tr>
                   <td>
-                    ${this.getEmailFooter(organizationName)}
+                    ${this.getEmailFooter(organizationName, organizationContact)}
                   </td>
                 </tr>
               </table>
@@ -308,12 +320,23 @@ class EmailService {
           : ""
       }
 
-      <!-- CTA Button -->
-      <div style="text-align: center; margin: 30px 0;">
-        <p style="color: ${this.brandColors.gray}; font-size: 14px; margin: 0 0 20px 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
-          Have questions about this quotation? Contact us directly.
+      <!-- Schedule Service CTA -->
+      <div style="background: linear-gradient(135deg, ${this.brandColors.primary} 0%, ${this.brandColors.primaryDark} 100%); border-radius: 12px; padding: 30px; margin: 30px 0; text-align: center;">
+        <h3 style="color: #fff; font-size: 20px; margin: 0 0 12px 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+          Ready to proceed?
+        </h3>
+        <p style="color: rgba(255,255,255,0.9); font-size: 14px; margin: 0 0 20px 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+          Schedule your service appointment online and we'll take care of the rest.
         </p>
+        <a href="${process.env.FRONTEND_URL || 'https://errorlytic.tajilabs.co.ke'}/book?quotation=${quotation._id}&garage=${organization._id || ''}"
+           style="display: inline-block; background: #fff; color: ${this.brandColors.primary}; text-decoration: none; padding: 14px 32px; border-radius: 50px; font-size: 16px; font-weight: 600; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+          📅 Schedule Service
+        </a>
       </div>
+
+      <p style="color: ${this.brandColors.gray}; font-size: 14px; line-height: 1.6; margin: 0 0 15px 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+        Have questions about this quotation? Feel free to contact us directly.
+      </p>
 
       <p style="color: ${this.brandColors.gray}; font-size: 14px; line-height: 1.6; margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
         Best regards,<br>
@@ -321,7 +344,7 @@ class EmailService {
       </p>
     `;
 
-    return this.getBaseTemplate(content, organization.name);
+    return this.getBaseTemplate(content, organization.name, organization.contact || {});
   }
 
   /**

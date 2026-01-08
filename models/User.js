@@ -96,6 +96,24 @@ const userSchema = new mongoose.Schema(
         default: false,
       },
     },
+    googleCalendar: {
+      accessToken: {
+        type: String,
+        trim: true,
+      },
+      refreshToken: {
+        type: String,
+        trim: true,
+      },
+      calendarId: {
+        type: String,
+        trim: true,
+      },
+      isConnected: {
+        type: Boolean,
+        default: false,
+      },
+    },
     profile: {
       name: {
         type: String,

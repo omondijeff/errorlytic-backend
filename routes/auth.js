@@ -9,6 +9,7 @@ const {
   requireRole,
   superadminMiddleware,
 } = require("../middleware/auth");
+const googleCalendarService = require("../services/googleCalendarService");
 
 const router = express.Router();
 
@@ -1030,6 +1031,78 @@ router.get("/orgs/:id", authMiddleware, async (req, res) => {
       title: "Internal Server Error",
       detail: "An error occurred while fetching organization",
       status: 500,
+    });
+  }
+});
+
+// Google Calendar Integration
+router.get("/google/calendar/url", authMiddleware, async (req, res) => {
+  try {
+    const url = googleCalendarService.generateAuthUrl(req.user._id);
+    res.json({ success: true, url });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+router.get("/google/calendar/callback", async (req, res) => {
+  try {
+    const { code, state } = req.query;
+    await googleCalendarService.handleAuthCallback(code, state);
+    
+    // Redirect back to frontend bookings page
+    res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:7337'}/app/bookings?calendar_connected=true`);
+  } catch (error) {
+    console.error("Calendar callback error:", error);
+    res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:7337'}/app/bookings?error=calendar_connection_failed`);
+  }
+});
+
+router.post("/google/calendar/disconnect", authMiddleware, async (req, res) => {
+  try {
+    const result = await googleCalendarService.disconnectCalendar(req.user._id);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+/**
+ * @route   GET /api/v1/auth/clients
+ * @desc    Get all individual users (clients) - accessible by garage/insurer roles
+ * @access  Private
+ */
+router.get("/clients", authMiddleware, async (req, res) => {
+  try {
+    const { search } = req.query;
+    const query = { role: "individual", isActive: true };
+
+    if (search) {
+      query.$or = [
+        { "profile.name": { $regex: search, $options: "i" } },
+        { email: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    const clients = await User.find(query)
+      .select("email profile.name profile.phone")
+      .limit(50);
+
+    const transformedClients = clients.map((client) => ({
+      id: client._id,
+      email: client.email,
+      profile: client.profile,
+    }));
+
+    res.json({
+      success: true,
+      data: transformedClients,
+    });
+  } catch (error) {
+    console.error("Error fetching clients:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch clients",
     });
   }
 });
