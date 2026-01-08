@@ -559,6 +559,96 @@ class BookingService {
       throw error;
     }
   }
+
+  /**
+   * Create a booking from public page (no auth required)
+   * @param {Object} bookingData - Booking data from public form
+   * @returns {Promise<Object>} Created booking
+   */
+  async createPublicBooking(bookingData) {
+    try {
+      const {
+        garageId,
+        name,
+        email,
+        phone,
+        serviceType,
+        scheduledDate,
+        notes,
+        quotationId,
+      } = bookingData;
+
+      // Validate garage exists
+      const garage = await Organization.findById(garageId);
+      if (!garage || garage.type !== "garage") {
+        throw new Error("Invalid garage");
+      }
+
+      // Check for conflicting bookings
+      const conflictingBooking = await this.checkBookingConflict(
+        garageId,
+        scheduledDate,
+        60 // Default 1 hour duration
+      );
+
+      if (conflictingBooking) {
+        throw new Error(
+          "This time slot is already booked. Please choose a different time."
+        );
+      }
+
+      // Create booking with client info embedded (no user account required)
+      const booking = new Booking({
+        garageId,
+        clientInfo: {
+          name,
+          email,
+          phone,
+        },
+        serviceType,
+        scheduledDate: new Date(scheduledDate),
+        duration: 60,
+        notes,
+        quotationId: quotationId || null,
+        status: "pending",
+        source: "public_booking",
+      });
+
+      await booking.save();
+
+      // Populate garage reference
+      await booking.populate("garageId", "name contact");
+
+      // Log activity
+      await AuditLog.create({
+        orgId: garageId,
+        action: "public_booking_created",
+        target: {
+          type: "booking",
+          id: booking._id,
+          garageId,
+          scheduledDate,
+          clientEmail: email,
+        },
+      });
+
+      // Record metering
+      await Metering.create({
+        orgId: garageId,
+        type: "booking",
+        count: 1,
+        period: new Date().toISOString().slice(0, 7),
+      });
+
+      return {
+        booking,
+        message: "Booking created successfully. The garage will contact you to confirm.",
+      };
+    } catch (error) {
+      console.error("Create public booking error:", error);
+      throw error;
+    }
+  }
 }
 
 module.exports = new BookingService();

@@ -379,4 +379,59 @@ router.post(
   }
 );
 
+/**
+ * @route   POST /api/v1/bookings/public
+ * @desc    Create booking from public page (no auth required)
+ * @access  Public
+ */
+router.post(
+  "/public",
+  [
+    body("garageId").notEmpty().withMessage("Garage ID is required"),
+    body("name").notEmpty().withMessage("Name is required"),
+    body("email").isEmail().withMessage("Valid email is required"),
+    body("phone").notEmpty().withMessage("Phone number is required"),
+    body("serviceType")
+      .isIn(["inspection", "repair", "maintenance", "diagnostic"])
+      .withMessage("Invalid service type"),
+    body("scheduledDate")
+      .isISO8601()
+      .withMessage("Valid scheduled date is required"),
+    body("notes")
+      .optional()
+      .trim()
+      .isLength({ max: 1000 })
+      .withMessage("Notes must be less than 1000 characters"),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        type: "validation_error",
+        title: "Validation Failed",
+        detail: "Invalid input data",
+        errors: errors.array(),
+      });
+    }
+
+    try {
+      const result = await bookingService.createPublicBooking(req.body);
+
+      res.status(201).json({
+        type: "booking_created",
+        title: "Booking Created Successfully",
+        detail: result.message,
+        data: result.booking,
+      });
+    } catch (error) {
+      console.error("Error creating public booking:", error);
+      res.status(500).json({
+        type: "internal_server_error",
+        title: "Internal Server Error",
+        detail: error.message,
+      });
+    }
+  }
+);
+
 module.exports = router;

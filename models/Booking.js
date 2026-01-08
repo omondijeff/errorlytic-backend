@@ -5,7 +5,12 @@ const bookingSchema = new mongoose.Schema(
     clientId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
+    },
+    // For public bookings where client doesn't have an account
+    clientInfo: {
+      name: String,
+      email: String,
+      phone: String,
     },
     garageId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -15,7 +20,6 @@ const bookingSchema = new mongoose.Schema(
     vehicleId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Vehicle",
-      required: true,
     },
     serviceType: {
       type: String,
@@ -54,7 +58,11 @@ const bookingSchema = new mongoose.Schema(
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
+    },
+    source: {
+      type: String,
+      enum: ["app", "public_booking"],
+      default: "app",
     },
     confirmedBy: {
       type: mongoose.Schema.Types.ObjectId,

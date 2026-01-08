@@ -119,7 +119,22 @@ app.use("/api/v1/reports", reportsRoutes);
 app.use("/api/v1/vehicles", authMiddleware, vehiclesRoutes);
 app.use("/api/v1/credits", creditsRoutes);
 app.use("/api/v1/payments", paymentsRoutes);
+// Public booking endpoint (no auth)
+app.post("/api/v1/bookings/public", bookingsRoutes);
 app.use("/api/v1/bookings", authMiddleware, bookingsRoutes);
+// Public organization endpoint for getting garage info
+app.get("/api/v1/organizations/:id/public", async (req, res) => {
+  try {
+    const Organization = require("./models/Organization");
+    const org = await Organization.findById(req.params.id).select("name contact type");
+    if (!org || org.type !== "garage") {
+      return res.status(404).json({ type: "not_found", detail: "Garage not found" });
+    }
+    res.json({ data: org });
+  } catch (error) {
+    res.status(500).json({ type: "error", detail: error.message });
+  }
+});
 app.use("/api/v1/organizations", authMiddleware, organizationRoutes);
 
 // Legacy API routes (for backward compatibility)
