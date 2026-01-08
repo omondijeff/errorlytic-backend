@@ -342,6 +342,47 @@ Notes: ${booking.notes || "N/A"}
   }
 
   /**
+   * Get calendar events for user
+   * @param {string} userId - User ID
+   * @param {Object} options - Options (timeMin, timeMax)
+   * @returns {Promise<Array>} Array of events
+   */
+  async getCalendarEvents(userId, options = {}) {
+    try {
+      const calendar = await this.getCalendarClient(userId);
+
+      // Default to current month if no range specified
+      const now = new Date();
+      const timeMin = options.timeMin || new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+      const timeMax = options.timeMax || new Date(now.getFullYear(), now.getMonth() + 2, 0).toISOString();
+
+      const response = await calendar.events.list({
+        calendarId: "primary",
+        timeMin: timeMin,
+        timeMax: timeMax,
+        maxResults: 100,
+        singleEvents: true,
+        orderBy: "startTime",
+      });
+
+      return response.data.items.map((event) => ({
+        id: event.id,
+        title: event.summary,
+        description: event.description,
+        start: event.start.dateTime || event.start.date,
+        end: event.end.dateTime || event.end.date,
+        location: event.location,
+        htmlLink: event.htmlLink,
+        isAllDay: !event.start.dateTime,
+        source: "google",
+      }));
+    } catch (error) {
+      console.error("Get calendar events error:", error);
+      throw error;
+    }
+  }
+
+  /**
    * Disconnect Google Calendar for user
    * @param {string} userId - User ID
    * @returns {Promise<Object>} Result

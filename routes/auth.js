@@ -1075,6 +1075,38 @@ router.post("/google/calendar/disconnect", authMiddleware, async (req, res) => {
   }
 });
 
+// @route   GET /api/v1/auth/google/calendar/events
+// @desc    Get Google Calendar events for the authenticated user
+// @access  Private
+router.get("/google/calendar/events", authMiddleware, async (req, res) => {
+  try {
+    // Check if user has Google Calendar connected
+    if (!req.user.googleCalendar?.isConnected) {
+      return res.status(400).json({
+        success: false,
+        message: "Google Calendar not connected",
+      });
+    }
+
+    const { timeMin, timeMax } = req.query;
+    const events = await googleCalendarService.getCalendarEvents(req.user._id, {
+      timeMin,
+      timeMax,
+    });
+
+    res.json({
+      success: true,
+      data: events,
+    });
+  } catch (error) {
+    console.error("Error fetching calendar events:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch calendar events",
+    });
+  }
+});
+
 /**
  * @route   GET /api/v1/auth/clients
  * @desc    Get all individual users (clients) - accessible by garage/insurer roles
