@@ -1046,23 +1046,45 @@ router.get("/orgs/:id", authMiddleware, async (req, res) => {
 // Google Calendar Integration
 router.get("/google/calendar/url", authMiddleware, async (req, res) => {
   try {
-    const url = googleCalendarService.generateAuthUrl(req.user._id);
+    const userId = req.user._id.toString();
+    console.log("Generating Google Calendar auth URL for user:", userId);
+    const url = googleCalendarService.generateAuthUrl(userId);
+    console.log("Generated auth URL:", url);
     res.json({ success: true, url });
   } catch (error) {
+    console.error("Error generating calendar auth URL:", error);
     res.status(500).json({ success: false, message: error.message });
   }
 });
 
 router.get("/google/calendar/callback", async (req, res) => {
+  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+
   try {
     const { code, state } = req.query;
+
+    console.log("Google Calendar callback received:", { code: code ? "present" : "missing", state: state ? "present" : "missing" });
+
+    // Validate required parameters
+    if (!code) {
+      console.error("Missing authorization code in callback");
+      return res.redirect(`${frontendUrl}/app/bookings?error=missing_code`);
+    }
+
+    if (!state) {
+      console.error("Missing state (userId) in callback");
+      return res.redirect(`${frontendUrl}/app/bookings?error=missing_state`);
+    }
+
     await googleCalendarService.handleAuthCallback(code, state);
-    
+
+    console.log("Google Calendar connected successfully for user:", state);
+
     // Redirect back to frontend bookings page
-    res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:7337'}/app/bookings?calendar_connected=true`);
+    res.redirect(`${frontendUrl}/app/bookings?calendar_connected=true`);
   } catch (error) {
     console.error("Calendar callback error:", error);
-    res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:7337'}/app/bookings?error=calendar_connection_failed`);
+    res.redirect(`${frontendUrl}/app/bookings?error=calendar_connection_failed`);
   }
 });
 
