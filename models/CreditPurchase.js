@@ -106,6 +106,13 @@ const creditPurchaseSchema = new mongoose.Schema({
       enum: ['web', 'mobile', 'api', 'admin'],
       default: 'web',
     },
+    // For admin-added credits - tracks who added them
+    addedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
+    addedByEmail: String,
+    reason: String,
   },
 }, {
   timestamps: true,

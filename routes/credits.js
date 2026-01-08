@@ -224,7 +224,8 @@ router.post(
       const result = await creditService.addComplimentaryCredits(
         userId,
         credits,
-        reason || 'Admin added'
+        reason || 'Admin added',
+        req.user // Pass admin user for audit trail
       );
 
       res.json({

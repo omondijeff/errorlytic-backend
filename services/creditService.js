@@ -459,9 +459,16 @@ class CreditService {
    * @param {string} userId - User ID
    * @param {number} credits - Number of credits to add
    * @param {string} reason - Reason for adding credits
+   * @param {Object} adminUser - Admin user who is adding the credits
    */
-  async addComplimentaryCredits(userId, credits, reason = 'Complimentary') {
+  async addComplimentaryCredits(userId, credits, reason = 'Complimentary', adminUser = null) {
     const balance = await CreditBalance.getOrCreate(userId);
+    const targetUser = await User.findById(userId);
+
+    // Determine rate based on user type
+    const isOrganizationUser = targetUser && ['garage_admin', 'garage_user', 'insurer_admin', 'insurer_user'].includes(targetUser.role);
+    const ratePerCredit = isOrganizationUser ? 200 : 100; // KES
+    const totalValue = credits * ratePerCredit;
 
     // Create a purchase record for audit trail
     const purchase = await CreditPurchase.create({
@@ -472,10 +479,10 @@ class CreditService {
         name: `Complimentary: ${reason}`,
       },
       pricing: {
-        basePrice: 0,
-        discount: 0,
+        basePrice: totalValue,
+        discount: 100, // 100% discount since it's complimentary
         promoDiscount: 0,
-        total: 0,
+        total: 0, // No actual charge
         currency: 'KES',
       },
       payment: {
@@ -486,8 +493,13 @@ class CreditService {
       creditsDelivered: false,
       metadata: {
         source: 'admin',
+        addedBy: adminUser?._id || adminUser?.id,
+        addedByEmail: adminUser?.email,
+        reason: reason,
       },
     });
+
+    console.log(`[CREDIT AUDIT] Admin ${adminUser?.email || 'unknown'} added ${credits} credits (value: KES ${totalValue}) to user ${targetUser?.email || userId}. Reason: ${reason}`);
 
     // Add credits
     await balance.addCredits(credits, purchase._id, 365);
