@@ -50,6 +50,13 @@ jobs:
               echo "GOOGLE_REDIRECT_URI=https://api.errorlytic.tajilabs.co.ke/api/v1/auth/google/calendar/callback" >> .env
             fi
 
+            # Set FRONTEND_URL for OAuth redirects
+            if grep -q "FRONTEND_URL" .env; then
+              sed -i "s|^FRONTEND_URL=.*|FRONTEND_URL=https://errorlytic.tajilabs.co.ke|" .env
+            else
+              echo "FRONTEND_URL=https://errorlytic.tajilabs.co.ke" >> .env
+            fi
+
             # Rebuild app only (preserves data volumes)
             docker compose build --no-cache app
 
