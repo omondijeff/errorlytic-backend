@@ -88,13 +88,22 @@ class QuotationService {
         taxPct = defaultTax,
         useOEMParts = false,
         notes = "",
-        customLineItems = [], // Extract custom line items
+        customLineItems, // Extract custom line items (no default to distinguish from missing)
       } = options;
 
       let parts = [];
       let laborHours = 0;
 
-      if (customLineItems && customLineItems.length > 0) {
+      if (customLineItems) {
+        if (customLineItems.length === 0) {
+           // Allow empty line items if that was the intent, or throw error?
+           // Frontend sends it, maybe filter out invalid ones first?
+           // Assuming if provided, we use it. If empty, we proceed with empty parts (quotation with 0 items valid?)
+           // Or throw helpful error.
+           // Let's assume valid to have 0 items but generally useless.
+           // Throwing error is safer.
+           throw new Error("No valid line items provided for quotation");
+        }
         // Use custom line items from frontend
         parts = customLineItems.map(item => ({
           name: item.description,

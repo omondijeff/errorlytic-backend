@@ -3,10 +3,12 @@ const { body, validationResult } = require("express-validator");
 const { authMiddleware, requireRole } = require("../middleware/auth");
 const quotationService = require("../services/quotationService");
 const pdfService = require("../services/pdfService");
+const emailService = require("../services/emailService");
 const Quotation = require("../models/Quotation");
 const Analysis = require("../models/Analysis");
 const Walkthrough = require("../models/Walkthrough");
 const Organization = require("../models/Organization");
+const Vehicle = require("../models/Vehicle");
 
 const router = express.Router();
 
@@ -167,9 +169,13 @@ router.post(
       });
     } catch (error) {
       console.error("Error generating quotation:", error);
-      res.status(500).json({
-        type: "internal_server_error",
-        title: "Internal Server Error",
+      console.error(error.stack); // Log stack trace for debugging
+      
+      const status = error.message === "Organization not found" ? 404 : 500;
+      
+      res.status(status).json({
+        type: status === 404 ? "not_found" : "internal_server_error",
+        title: status === 404 ? "Resource Not Found" : "Internal Server Error",
         detail: error.message,
       });
     }
@@ -502,6 +508,157 @@ router.delete(
       });
     } catch (error) {
       console.error("Error deleting quotation:", error);
+      res.status(500).json({
+        type: "internal_server_error",
+        title: "Internal Server Error",
+        detail: error.message,
+      });
+    }
+  }
+);
+
+/**
+ * @swagger
+ * /api/v1/quotations/{quotationId}/send:
+ *   post:
+ *     summary: Send quotation to client via email
+ *     description: Send the quotation to the vehicle owner's email address
+ *     tags: [Quotations]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: quotationId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Quotation ID
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 description: Override email address (optional, defaults to vehicle owner email)
+ *     responses:
+ *       200:
+ *         description: Quotation sent successfully
+ *       400:
+ *         description: No email address available
+ *       404:
+ *         description: Quotation not found
+ */
+router.post(
+  "/:quotationId/send",
+  authMiddleware,
+  requireRole(["garage_user", "garage_admin"]),
+  [
+    body("email")
+      .optional()
+      .isEmail()
+      .withMessage("Invalid email address"),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        type: "validation_error",
+        title: "Validation Failed",
+        detail: "Invalid input data",
+        status: 400,
+        errors: errors.array(),
+      });
+    }
+
+    try {
+      const { quotationId } = req.params;
+      const { email: overrideEmail } = req.body;
+      const orgId = req.user.orgId;
+
+      // Get quotation with analysis
+      const quotation = await Quotation.findById(quotationId);
+      if (!quotation) {
+        return res.status(404).json({
+          type: "quotation_not_found",
+          title: "Quotation Not Found",
+          detail: "Quotation not found",
+        });
+      }
+
+      // Check access permissions
+      if (quotation.orgId && quotation.orgId.toString() !== orgId.toString()) {
+        return res.status(403).json({
+          type: "access_denied",
+          title: "Access Denied",
+          detail: "You don't have permission to send this quotation",
+        });
+      }
+
+      // Get related data
+      const analysis = await Analysis.findById(quotation.analysisId).populate("vehicleId");
+      if (!analysis) {
+        return res.status(404).json({
+          type: "analysis_not_found",
+          title: "Analysis Not Found",
+          detail: "Related analysis not found",
+        });
+      }
+
+      const vehicle = analysis.vehicleId;
+      const organization = await Organization.findById(orgId);
+
+      if (!organization) {
+        return res.status(404).json({
+          type: "organization_not_found",
+          title: "Organization Not Found",
+          detail: "Organization not found",
+        });
+      }
+
+      // Determine client email - use override or vehicle owner's email
+      const clientEmail = overrideEmail || vehicle?.ownerInfo?.email;
+      const clientName = vehicle?.ownerInfo?.firstName
+        ? `${vehicle.ownerInfo.firstName} ${vehicle.ownerInfo.lastName || ""}`.trim()
+        : vehicle?.ownerInfo?.name || "Valued Customer";
+
+      if (!clientEmail) {
+        return res.status(400).json({
+          type: "no_email",
+          title: "No Email Address",
+          detail: "No email address found for this vehicle owner. Please provide an email address.",
+        });
+      }
+
+      // Send the email
+      const result = await emailService.sendQuotationEmail(
+        quotation,
+        organization,
+        vehicle,
+        clientEmail,
+        clientName
+      );
+
+      // Update quotation status to 'sent' if it was draft
+      if (quotation.status === "draft") {
+        quotation.status = "sent";
+        await quotation.save();
+      }
+
+      res.status(200).json({
+        type: "quotation_sent",
+        title: "Quotation Sent Successfully",
+        detail: `Quotation has been sent to ${clientEmail}`,
+        data: {
+          recipient: clientEmail,
+          messageId: result.messageId,
+          status: quotation.status,
+        },
+      });
+    } catch (error) {
+      console.error("Error sending quotation:", error);
       res.status(500).json({
         type: "internal_server_error",
         title: "Internal Server Error",
